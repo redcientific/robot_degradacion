@@ -1,0 +1,148 @@
+import discord
+from discord.ext import commands
+import random
+
+description = '''An example bot to showcase the discord.ext.commands extension module. There are a number of utility commands being showcased here.'''
+
+intents = discord.Intents.default()
+intents.members = True
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='?', description=description, intents=intents)
+
+@bot.event
+async def on_ready():
+    print(f'hemos iniciado como {bot.user} (ID: {bot.user.id})')
+    print('---------------------------------')
+
+@bot.command()
+async def sumar(ctx, left: int, right: int):
+    """Adds two numbers together."""
+    await ctx.send(left + right)
+
+@bot.command()
+async def restar(ctx, left1: int, right1: int):
+    """Subtracts two numbers."""
+    await ctx.send(left1 - right1)
+
+@bot.command()
+async def multiplicar(ctx, left2: int, right2: int):
+    """Multiplies two numbers."""
+    await ctx.send(left2 * right2)
+
+@bot.command()
+async def roll(ctx, dice: str):
+    """Rolls a dice in NdN format."""
+    try:
+        rolls, limit = map(int, dice.split('d'))
+    except Exception:
+        await ctx.send('Format has to be in NdN!')
+        return
+
+    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
+    await ctx.send(result)
+
+@bot.command(description='For when you wanna settle the score some other way')
+async def elejir(ctx, *choices: str):
+    """Chooses between multiple choices."""
+    await ctx.send(random.choice(choices))
+
+@bot.command()
+async def repetir(ctx, times: int, content='repeating...'):
+    """Repeats a message multiple times."""
+    for i in range(times):
+        await ctx.send(content)
+
+@bot.command()
+async def joined(ctx, member: discord.Member):
+    """Says when a member joined."""
+    await ctx.send(f'{member.name} joined {discord.utils.format_dt(member.joined_at)}')
+
+@bot.group()
+async def cool(ctx):
+    """Says if a user is cool."""
+    if ctx.invoked_subcommand is None:
+        await ctx.send(f'Not cool')
+
+@bot.command()
+async def copiar(ctx, *, mensaje: str): 
+    await ctx.send(mensaje) 
+    for i in range(1, 5): 
+        await ctx.send(mensaje * i)
+
+@bot.command() 
+async def dado(ctx): 
+    """Lanza un dado de 6 caras y devuelve el resultado.""" 
+    import random 
+    resultado = random.randint(1, 6) 
+    await ctx.send(f"El resultado del lanzamiento del dado de 6 caras es: {resultado}")
+
+@bot.command() 
+async def moneda(ctx): 
+    """Lanza una moneda y devuelve ya sea cara o cruz.""" 
+    import random 
+    resultado = random.choice(["Cara", "Cruz"]) 
+    await ctx.send(f"El resultado del lanzamiento de la moneda es: {resultado}")
+
+@cool.command(name='bot')
+async def _bot(ctx):
+    """Is the bot cool?"""
+    await ctx.send('Yes, the bot is cool.')
+
+@bot.command()
+async def degradacion(ctx, material: str):
+    """Time taken for material to degrade."""
+    time_map = {
+        'plastico': 'Puede tardar hastar de 100 a 1000 años en degradarse.',
+        'Plastico': 'Puede tardar hastar de 100 a 1000 años en degradarse.',
+        'tela': 'Puede tardar hasta 6 meses en degradarse.',
+        'Tela': 'Puede tardar hasta 6 meses en degradarse.',
+        'madera': 'Puede tardar entre 2 a 3 años en degradarse.',
+        'Madera': 'Puede tardar entre 2 a 3 años en degradarse.',
+        'pan': 'porque preguntas eso? bueno igual una semana',
+        'Pan': 'porque preguntas eso? bueno igual una semana',
+        'cadaver': 'ok???... un año',
+        'Cadaver': 'ok???... un año',
+        'vidrio': '4000 años aproximadamente.',
+        'Vidrio': '4000 años aproximadamente.',
+        'botella': 'Puede tardar hastar de 100 a 1000 años en degradarse.',
+        'Botella': 'Puede tardar hastar de 100 a 1000 años en degradarse.',
+        'bolsa': 'Puede tardar hastar de 100 a 1000 años en degradarse.',
+        'Bolsa': 'Puede tardar hastar de 100 a 1000 años en degradarse.',
+        'aluminio': '40 años',
+        'Aluminio': '40 años',
+        'metal': '30 años casi como el aluminio',
+        'Metal': '30 años casi como el aluminio',
+        'papel': 'un año',
+        'Papel': 'un año',
+        'animal': 'ok???... un año',
+        'Animal': 'ok???... un año',
+        'among us': 'no lo se tu dime',
+        'Among us': 'no lo se tu dime',
+        'amongus': 'no lo se tu dime',
+        'Amongus': 'no lo se tu dime',
+        'xd': 'xd, que?',
+        'XD': 'XD, que?',
+        'xD': 'xD, que?',
+        'lol': 'what?',
+        'Lol': 'what?',
+        'LOL': 'what?',
+        'ceramica': 'aproximadamente... !!!UN MILLON DE AÑOS?¡¡¡  wow',
+        'Ceramica': 'aproximadamente... !!!UN MILLON DE AÑOS?¡¡¡  wow',
+        'carton': 'tarda 1 año',
+        'Carton': 'tarda 1 año',
+        'piedra': 'de 500 a 1000 años',
+        'Piedra': 'de 500 a 1000 años',
+        'roca': 'de 500 a 1000 años',
+        'Roca': 'de 500 a 1000 años',
+        'Lapiz': 'un lapiz? busca otra cosa',
+        'lapiz': 'un lapiz? busca otra cosa',
+        
+    }
+    
+    if material.lower() in time_map:
+        await ctx.send(time_map[material.lower()])
+    else:
+        await ctx.send('no se que es eso intenta con no se "pan"')
+
+bot.run('')
